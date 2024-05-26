@@ -1,0 +1,273 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct n {
+    int data;
+    struct n* next;
+};
+
+struct n* head = NULL;
+
+int counter() {
+    int cntr = 0;
+    struct n* temp = head;
+    while (temp != NULL) {
+        cntr++;
+        temp = temp->next;
+    }
+    return cntr;
+}
+
+void deletebefore(int searchq)
+{
+    struct n* temp = head;
+    struct n* prev = head;
+    if (head == NULL)
+    {
+        return;
+    }
+    while (temp->next->data != searchq && temp->data != NULL)
+    {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp->next != NULL)
+    {
+        prev->next = temp->next;
+        temp->next = NULL;
+        free(temp);
+    }
+}
+void deleteafter(int searcha)
+{
+    struct n* temp = head;
+    struct n* last= head;
+    if (head == NULL)
+    {
+        return;
+    }
+    while (temp->data != searcha && temp != NULL)
+    {
+        temp = temp->next;
+    }
+    if (temp != NULL)
+    {
+        last = temp;
+        temp = temp->next;
+        last->next = temp->next;
+        temp->next = NULL;
+        free(temp);
+    }
+}
+void insertafter(int xdata, int searchD)
+{
+    struct n* newnode = (struct n*)malloc(sizeof(struct n));
+    newnode->data = xdata;
+    if (head == NULL)
+    {
+        return;
+    }
+    struct n*  temp = head;
+    while (temp->data != searchD && temp!=NULL)
+    {
+        temp = temp->next;
+    }
+    if (temp != NULL)
+    {
+        newnode->next = temp->next;
+        temp->next = newnode;
+    }
+}
+void insertbefore(int ndata,int searchdata)
+{
+    struct n* newnode = (struct n*)malloc(sizeof(struct n));
+    newnode->data = ndata;
+    if (head == NULL)
+    {
+        return;
+    }
+    if (head->data == searchdata)
+    {
+        newnode->next = head;
+        head = newnode;
+        return;
+    }
+    struct n * temp = head;
+    struct n* prev = NULL;
+    while (temp != NULL && temp->data != searchdata)
+    {
+        prev = temp;
+        temp= temp->next;
+    }
+    if (temp != NULL)
+    {
+        prev->next = newnode;
+        newnode->next = temp;
+    }
+}
+
+void displaylist() {
+    struct n* temp = head;
+    int cntr = 0;
+    while (temp != NULL) {
+        cntr++;
+        printf("Node %d :%d\n", cntr, temp->data);
+        temp = temp->next;
+    }
+    return;
+}
+
+
+void isInList(int data) {
+    int pos = 0;
+    struct n* temp = head;
+    while (temp != NULL) {
+        pos++;
+        if (data == temp->data) {
+            printf("Node with value %d found at position %d\n", data, pos);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Node not found\n");
+    return;
+}
+
+void deleteFirst() {
+    if (head == NULL) return;
+    struct n* temp = head;
+    head = head->next;
+    free(temp);
+}
+
+void deleteLast() {
+    if (head == NULL) return;
+    struct n* temp = head;
+    struct n* last = NULL;
+    while (temp->next != NULL) {
+        last = temp;
+        temp = temp->next;
+    }
+    if (last == NULL) { // if only one node exists
+        head = NULL;
+        free(temp);
+    }
+    else {
+        last->next = NULL;
+        free(temp);
+    }
+}
+
+void deleteDesired(int data) {
+    if (head == NULL) return;
+    struct n* temp = head;
+    struct n* last = head;
+
+    while (temp != NULL) {
+        if (data == temp->data)  break;
+        last = temp;
+        temp = temp->next;
+    }
+    // not found
+    if (temp == NULL) return; //we could not find the data
+
+    if (temp == last) { // if node is the first one
+        head = head->next;
+        free(temp);
+        return;
+    }
+    // for last & intermediate
+    last->next = temp->next;
+    free(temp);
+    return;
+}
+
+void InserttoEnd(int data) {
+    // create node
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->data = data;
+    n->next = NULL;
+
+    //first Node
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+
+    // find position
+    struct n* last = NULL;
+    struct n* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    //binding the last one with the new node
+    temp->next = n;
+    return;
+}
+
+void InserttoBeginning(int data) {
+    // create node
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->data = data;
+    n->next = head;
+    head = n;
+    return;
+}
+
+
+void InsertSorted(int data) {
+    // create node
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->data = data;
+    n->next = NULL;
+
+    //first Node
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+
+    // find position
+    struct n* last = NULL;
+    struct n* temp = head;
+    while ((temp != NULL) && (temp->data < n->data)) {
+        last = temp;
+        temp = temp->next;
+    }
+    if (last == NULL) {
+        n->next = head;
+        head = n;
+    }
+    else
+    {
+        n->next = last->next;
+        last->next = n;
+    }
+    return;
+}
+
+
+void main() {
+    InserttoEnd(1);
+    InserttoEnd(2);
+    InserttoEnd(4);
+    InserttoEnd(5);
+    InsertSorted(3);
+    InserttoBeginning(0);
+    InsertSorted(7);
+    InserttoEnd(6);
+    insertbefore(50, 4);
+    insertafter(51, 50);
+    deleteFirst();
+    deleteLast();
+    deleteDesired(2);
+    deleteafter(3);
+    deletebefore(51);
+    printf("Number of Element is:%d\n", counter());
+    displaylist();
+
+    isInList(4);
+    return;
+
+}

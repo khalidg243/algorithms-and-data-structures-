@@ -1,0 +1,119 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+
+struct bstn
+{
+    int data;
+    struct bstn* left;
+    struct bstn* right;
+};
+
+struct bstn* root = NULL;
+
+struct bstn* createnode(int data)
+{
+    struct bstn* node = (struct bstn*)malloc(sizeof(struct bstn));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+struct bstn* addnode(struct bstn** root1, int data)
+{
+    if (!*(root1))
+    {
+        *root1 = createnode(data);
+    }
+    else if (data > (*root1)->data)
+    {
+        (*root1)->right = addnode(&((*root1)->right), data);
+    }
+    else if (data < (*root1)->data)
+    {
+        (*root1)->left = addnode(&((*root1)->left), data);
+    }
+    return (*root1);
+}
+
+int maxvalue(struct bstn* root1)
+{
+    if (!root1)
+    {
+        printf("\nThe tree is empty");
+        return 0;
+    }
+    struct bstn* temp = root1;
+    while (temp->right)
+    {
+        temp = temp->right;
+    }
+    return temp->data;
+}
+
+void inordertraversal(struct bstn* root1)
+{
+    if (root1)
+    {
+        inordertraversal(root1->left);
+        printf("%d", root1->data);
+        inordertraversal(root1->right);
+    }
+}
+struct bstn* isintree(struct bstn* root1, int data)
+{
+    struct bstn* temp = root1;
+    if (temp == NULL)
+    {
+        return NULL;
+    }
+    if(data>temp->data)
+    {
+     return isintree(temp->right,data);
+    }
+    else if (data < temp->data)
+    {
+    return isintree(temp->left, data);
+    }
+    else if (data == temp->data)
+   {
+       return temp;
+    }
+     return temp;
+    
+}
+int sumof(struct bstn* root1)
+{
+    int sum = 0;
+    if (root1)
+    {
+        sum+=sumof(root1->left);
+        sum += root1->data;
+        sum+=sumof(root1->right);
+    }
+    return sum;
+}
+
+
+void main()
+{
+    int x;
+    addnode(&root, 4);
+    addnode(&root, 2);
+    addnode(&root, 1);
+    addnode(&root, 6);
+    addnode(&root, 3);
+    addnode(&root, 5);
+    addnode(&root, 7);
+    printf("\nThe tree inorder is as follows: ");
+    inordertraversal(root);
+    printf("\nThe maximum value in the tree is: %d", maxvalue(root));
+    printf("\nthe sum of numbers in the tree is: %d", sumof(root));
+    printf("\nPlease enter a number: ");
+    scanf_s("%d", &x);
+    if (isintree(root, x) == NULL)
+        printf("\nit is not in the tree");
+    else
+        printf("\%d is in tree.", x);
+}

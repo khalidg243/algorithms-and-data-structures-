@@ -1,0 +1,56 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+struct stack
+{
+	char x;
+	struct stack* prev;
+};
+
+struct stack* top;
+
+void push(struct stack** top1, char x)
+{
+	struct stack* node = (struct stack*)malloc(sizeof(struct stack));
+	node->x = x;
+	node->prev = *top1;
+	*top1 = node;
+}
+
+void pop(struct stack** top1)
+{
+	struct stack* temp = *top1;
+	*top1 = (*top1)->prev;
+	free(temp);
+}
+
+int isapalindrome(char word[50])
+{
+	int i;
+	for (i = 0; i < strlen(word) && word[i] != '.'; i++)
+	{
+		push(&top, word[i]);
+	}
+	if(word[i]=='.')
+	{
+		i++;
+		while(i<strlen(word) && top->x==word[i++])
+		{
+			pop(&top);
+		}
+		if (!top)
+			return 1;
+	}
+	return 0;
+}
+void main()
+{
+	char word[50];
+	printf("Please enter a string with the character '.' in the middle: ");
+	scanf_s("%s", word, 50);
+	if (isapalindrome(word) == 0)
+		printf("\nstring is not a palindrome");
+	else
+		printf("\String is a palindrome.");
+}

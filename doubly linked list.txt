@@ -1,0 +1,319 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct n {
+    struct n* prev;
+    int data;
+    struct n* next;
+};
+
+struct n* head = NULL;
+
+//count number of elements
+int counter() {
+    int cntr = 0;
+    struct n* temp = head;
+    while (temp != NULL) {
+        cntr++;
+        temp = temp->next;
+    }
+    return cntr;
+}
+
+//display the list
+void displaylist() {
+    struct n* temp = head;
+    int cntr = 0;
+    while (temp != NULL) {
+        cntr++;
+        printf("Node %d :%d\n", cntr, temp->data);
+        temp = temp->next;
+    }
+    return;
+}
+
+//display the list in reverse order
+void diplaylistinRev() {
+    struct n* temp = head;
+    int cntr = 0;
+    if (temp == NULL) return; //List is empty;
+
+    while (temp->next != NULL) { // Find the last node
+        temp = temp->next;
+    }
+
+    while (temp != NULL) { // start from last print all nodes
+        cntr++;
+        printf("Node %d from end :%d\n", cntr, temp->data);
+        temp = temp->prev;
+    }
+    return;
+}
+
+//check if data is in the list
+void isInList(int data) {
+    int pos = 0;
+    struct n* temp = head;
+    while (temp != NULL) {
+        pos++;
+        if (data == temp->data) {
+            printf("Node with value %d found at position %d\n", data, pos);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Node not found\n");
+    return;
+}
+
+//add a new node to the end
+void InserttoEnd(int data) {
+    // create node
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->prev = NULL;
+    n->data = data;
+    n->next = NULL;
+
+    //first Node
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+
+    // find position
+    struct n* last = NULL;
+    struct n* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    //binding the last one with the new node
+    temp->next = n;
+    n->prev = temp;
+    return;
+}
+
+
+
+//add a new node as head
+void InserttoBeginning(int data) {
+    // create node
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->prev = NULL;
+    n->data = data;
+    n->next = head;
+    if (head != NULL) head->prev = n;
+    head = n;
+    return;
+}
+
+
+//add a new node just before a node whose value is bigger than the new data
+void InsertSorted(int data) {
+    // create node
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->prev = NULL;
+    n->data = data;
+    n->next = NULL;
+
+    //first Node
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+
+    // find position
+    struct n* temp = head;
+    while ((temp != NULL) && (temp->data < n->data)) {
+        temp = temp->next;
+    }
+    struct n* temp2 = temp->prev;
+
+
+
+    n->prev = temp2;
+    temp2->next = n;
+
+    temp->prev = n;
+    n->next = temp;
+
+
+    return;
+}
+
+void insertbefore(int ndata, int searchdata)
+{
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+   
+    n->prev = NULL;
+    n->data = ndata;
+    n->next = NULL;
+   
+    if (head == NULL)
+    {
+        return;
+    }
+    struct n* temp = head;
+    while (temp != NULL && temp->data != searchdata)
+    {
+        temp = temp->next;
+    }
+    if (temp->prev == NULL)
+    {
+        n->next = temp;
+        temp->prev = n;
+        n->prev = NULL;
+        head = n;
+        return;
+    }
+    if (temp != NULL)
+    {
+        n->prev = temp->prev;
+        temp->prev->next = n;
+        n->next = temp;
+        temp->prev = n;
+        return;
+    }
+}
+void insertafter(int ndata, int searchdata)
+{
+    struct n* n = (struct n*)malloc(sizeof(struct n));
+    n->prev = NULL;
+    n->data = ndata;
+    n->next = NULL;
+
+    if (head == NULL)
+    {
+        return;
+    }
+    struct n* temp = head;
+    while (temp != NULL && temp->data != searchdata)
+    {
+        temp = temp->next;
+    }
+    if (temp != NULL)
+    {
+        n->prev = temp;
+        n->next = temp->next;
+        temp->next->prev = n;
+        temp->next = n;
+    }
+}
+void deletenode(int searchdata)
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    struct n* temp = head;
+    while (temp != NULL && temp->data != searchdata)
+    {
+        temp = temp->next;
+    }
+    if (temp->prev == NULL && temp->next==NULL)
+    {
+        free(temp);
+        return;
+    }
+    if (temp->prev == NULL)
+    {
+        temp->next->prev = NULL;
+        head = temp->next;
+        free(temp);
+        return;
+    }
+    if (temp->next == NULL)
+    {
+        temp->prev->next=NULL;
+        free(temp);
+        return;
+    }
+    if (temp!= NULL)
+    {
+        temp->next->prev = temp->prev;
+        temp->prev->next = temp->next;
+        free(temp);
+        return;
+    }
+}
+void deleteB4(int searchdata)
+{
+    if (head == NULL || head->next == NULL)
+    {
+        return;
+    }
+
+    struct n* temp = head;
+    struct n* last = head;
+    while (temp != NULL && temp->data != searchdata)
+    {
+        last = temp;
+        temp = temp->next;
+    }
+    if (last->prev == NULL)
+    {
+        temp->prev = NULL;
+        head = temp;
+        free(last);
+        return;
+    }
+    if (temp != NULL)
+    {
+        temp->prev = last->prev;
+        last->prev->next = temp;
+        free(last);
+        return;
+    }
+}
+
+   
+
+void deleteafter(int searchdata)
+{
+    if (head == NULL || head->next == NULL)
+    {
+        return;
+    }
+
+    struct n* temp = head;
+    struct n* last = head;
+    while (temp != NULL && last->data != searchdata)
+    {
+        last = temp;
+        temp = temp->next;
+    }
+    if (temp->next == NULL)
+    {
+        last->next = NULL;
+        free(temp);
+        return;
+    }
+    if (temp != NULL)
+    {
+        temp->next->prev = temp->prev;
+        last->next = temp->next;
+        free(temp);
+        return;
+    }
+}
+
+
+
+
+
+void main() {
+    InserttoBeginning(1);
+    InserttoEnd(2);
+    InserttoEnd(5);
+    InserttoEnd(6);
+    InsertSorted(3);
+    insertbefore(10, 1);
+    insertafter(11, 10);
+    deletenode(6);
+    deleteB4(5);
+    deleteafter(2);
+    displaylist();
+    diplaylistinRev();
+   
+    return;
+
+}

@@ -1,0 +1,84 @@
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct stacknode {
+	int x;
+	struct stacknode* prev;
+};
+
+struct stacknode* top = NULL;
+
+struct stacknode* push(struct stacknode** top1, int data)
+{
+	if (!*top1)
+	{
+		struct stacknode* node = (struct stacknode*)malloc(sizeof(struct stacknode));
+		node->x = data;
+		node->prev = NULL;
+		*top1 = node;
+		return *top1;
+	}
+	struct stacknode* node = (struct stacknode*)malloc(sizeof(struct stacknode));
+	node->x = data;
+	node->prev = *top1;
+	*top1 = node;
+	return *top1;
+}
+
+void pop(struct stacknode** top1)
+{
+	if (*top1)
+	{
+		struct stacknode* temp = *top1;
+		*top1 = (*top1)->prev;
+		free(temp);
+	}
+	return;
+}
+
+struct stacknode* reversestack(struct stacknode* top1)
+{
+	struct stacknode* test = NULL;
+	while (top1)
+	{
+		push(&test, top1->x);
+		pop(&top1);
+	}
+	return test;
+}
+
+
+void printStack(struct stacknode* top1)
+{
+	if (top1 == NULL) {
+		printf("Stack is empty.\n");
+		return;
+	}
+
+	struct stacknode* current = top1;
+	printf("Stack elements: ");
+	while (current != NULL) {
+		printf("%d ", current->x);
+		current = current->prev;
+	}
+	printf("\n");
+}
+
+int main()
+{
+	push(&top, 5);
+	push(&top, 4);
+	push(&top, 3);
+	push(&top, 2);
+	push(&top, 1);
+	printStack(top);
+	printStack(reversestack(top));
+
+	// Clean up the memory
+	while (top) {
+		pop(&top);
+	}
+
+	return 0;
+}
